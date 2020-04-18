@@ -12,6 +12,7 @@
 # the query recording, ranked from first to third.
 
 import os
+import numpy as np
 import time
 import pickle
 import librosa
@@ -46,37 +47,46 @@ class AudioMatcher:
 
                 self.fingerprints_db.update(song_peaks_map)
 
-                if i == 20:
+                if i == 10:
                     break
 
         print('DB contains {} fingerprints'.format(len(self.fingerprints_db)))
 
-    def match_song(self, song_path):
+    def match_song(self, song_path: str, num_results=3):
         audio, sr = librosa.load(song_path)
-        song_peaks_map = fingerprint(audio, show_spec=True)
+        song_peaks_map = fingerprint(audio)
 
         # mapping song ids to db-query time offset pairs
-        id_to_time_pairs = {}
+        id_to_time_diffs = {}
 
-        s1 = time.time()
         for feature in song_peaks_map:
             if feature in self.fingerprints_db:
                 db_song_offset, song_id = self.fingerprints_db[feature]
                 query_song_offset = song_peaks_map[feature][0]
 
-                if song_id not in id_to_time_pairs:
-                    id_to_time_pairs[song_id] = []
-                id_to_time_pairs[song_id].append((db_song_offset, query_song_offset))
+                time_diff = db_song_offset - query_song_offset
 
-        search_time = time.time() - s1
-        print('Search time: ', search_time)
+                if song_id not in id_to_time_diffs:
+                    id_to_time_diffs[song_id] = []
+                # id_to_time_diffs[song_id].append((db_song_offset, query_song_offset))
+                id_to_time_diffs[song_id].append(time_diff)
 
-        for k, v in id_to_time_pairs.items():
-            print(k, len(v))
+        song_ids = []
+        max_counts = []
+        # count unique time differences for each song id
+        for song_id, time_diffs in id_to_time_diffs.items():
+            _, counts = np.unique(time_diffs, return_counts=True)
+            max_counts.append(int(np.max(counts)))
+            song_ids.append(song_id)
+
+        res_indices = np.argsort(max_counts)[::-1][:num_results]
+
+        return [self.id_to_song[song_ids[i]] for i in res_indices]
 
 
 if __name__ == '__main__':
     matcher = AudioMatcher()
     matcher.build_database('./data/database_recordings')
     print('-' * 40)
-    matcher.match_song('./data/query_recordings/pop.00049-snippet-10-20.wav')
+    matches = matcher.match_song('./data/query_recordings/pop.00049-snippet-10-20.wav')
+    print(matches)
