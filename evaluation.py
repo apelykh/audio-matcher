@@ -38,6 +38,6 @@ def evaluate(results: dict):
 
 if __name__ == '__main__':
     matcher = AudioMatcher()
-    matcher.build_database('./data/database_recordings')
+    matcher.get_database('./data/database_recordings')
     results = matcher.match_from_folder('./data/query_recordings')
     evaluate(results)
