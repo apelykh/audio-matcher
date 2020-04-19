@@ -1,8 +1,7 @@
 import os
-import numpy as np
-import time
 import pickle
 import librosa
+import numpy as np
 from fingerprinting import fingerprint
 
 
@@ -33,7 +32,8 @@ class AudioMatcher:
             print('[.] Building the databse...')
 
             # sort the files to ensure consistent order
-            for i, audio_file in enumerate(sorted(os.listdir(audio_folder_path))):
+            listdir = sorted(os.listdir(audio_folder_path))
+            for i, audio_file in enumerate(listdir):
                 if not audio_file[-4:] == '.wav':
                     continue
 
@@ -44,12 +44,7 @@ class AudioMatcher:
 
                 audio_path = os.path.join(audio_folder_path, audio_file)
                 audio, sr = librosa.load(audio_path)
-
-                # s2 = time.time()
                 song_peaks_map = fingerprint(audio, song_id=i)
-                # finger_time = time.time() - s2
-                # print("--- fingerprinting time: {} ---".format(finger_time))
-
                 self.fingerprints_db.update(song_peaks_map)
 
             with open(db_filepath, 'wb') as f:
@@ -92,9 +87,14 @@ class AudioMatcher:
         if output_filepath:
             f = open(output_filepath, 'w')
 
-        for i, audio_file in enumerate(sorted(os.listdir(queries_folder))):
+        print('[.] Matching songs...')
+        listdir = sorted(os.listdir(queries_folder))
+        for i, audio_file in enumerate(listdir):
             if not audio_file[-4:] == '.wav':
                 continue
+
+            if i % 30 == 0:
+                print('File {}/{}'.format(i, len(listdir)))
 
             gt_song_name = '{}.wav'.format(audio_file.split('-')[0])
             gt_song_id = self.song_to_id[gt_song_name]
@@ -112,14 +112,3 @@ class AudioMatcher:
             f.close()
 
         return results
-
-
-if __name__ == '__main__':
-    matcher = AudioMatcher()
-    matcher.build_database('./data/database_recordings', './data')
-    print('-' * 40)
-    # matches = matcher.match_song('./data/query_recordings/pop.00049-snippet-10-0.wav')
-    # matches = matcher.match_song('./data/query_recordings/classical.00014-snippet-10-20.wav')
-    # print(matches)
-    results = matcher.match_from_folder('./data/query_recordings')
-    print(results)
