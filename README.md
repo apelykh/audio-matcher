@@ -1,10 +1,19 @@
 # A janky version of Shazam
 
+<p align="center">
+  <img src="/images/shazam.png" width="420" height="300" />
+</p>
+
 ## Description
+
 The proposed algorithm uses a combinatorially hashed time-frequency constellation analysis of
 audio file and based on the paper of Wang [1].
 
 On a high level, the algorithm relies on fingerprinting each audio file based on its spectral representation and storing the features of “database” tracks. The fingerprints of “query” files are subsequently matched against the database and the correctness of match is verified by checking a temporal correspondance of features.
+
+<p align="center">
+  <img src="/images/Figure_1.png" width="700" height="450" />
+</p>
 
 
 ## Usage
