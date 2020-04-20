@@ -1,0 +1,5 @@
+scipy==1.4.1
+matplotlib==3.2.1
+librosa==0.7.2
+numpy==1.18.2
+scikit_learn==0.22.2.post1
