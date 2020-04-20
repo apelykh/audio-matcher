@@ -108,7 +108,7 @@ def get_fingerprints(audio: np.array, song_id: int = None, show_spec=False) -> d
     if show_spec:
         freq_idx, time_idx = zip(*peaks)
         librosa.display.specshow(spectrogram, x_axis='frames', y_axis='frames')
-        plt.scatter(time_idx, freq_idx, c='red', s=4)
+        plt.scatter(time_idx, freq_idx, c='blue', s=5)
         plt.show()
 
     return feature_dict

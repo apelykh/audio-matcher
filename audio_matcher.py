@@ -77,7 +77,7 @@ class AudioMatcher:
                 pickle.dump(self.fingerprints_db, f)
 
         if self.verbose:
-            print('DB contains {} fingerprints'.format(len(self.fingerprints_db)))
+            print('DB contains {} fingerprints\n'.format(len(self.fingerprints_db)))
 
     @staticmethod
     def _decode_time_diffs(id_to_time_diffs: dict, num_results: int) -> tuple:
@@ -170,7 +170,7 @@ class AudioMatcher:
                 continue
 
             if i % 30 == 0 and self.verbose:
-                print('File {}/{}'.format(i, len(listdir)))
+                print('query {}/{}'.format(i, len(listdir)))
 
             audio_path = os.path.join(queries_folder, audio_file)
             matched_ids = self.match_song(audio_path, num_results)

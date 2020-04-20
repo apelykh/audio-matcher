@@ -33,7 +33,7 @@ def evaluate(results: dict):
 
     print('-' * 40)
     print('Evaluation results:')
-    print('Top-1 acc: {}\nTop-3 acc: {}\nF1 score: {}'.format(top1_acc, top3_acc, f1))
+    print('Top-1 acc:\t{}\nTop-3 acc:\t{}\nF1 score:\t{}'.format(top1_acc, top3_acc, f1))
 
 
 if __name__ == '__main__':
